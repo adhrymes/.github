@@ -4,17 +4,26 @@ Global reusable workflows and agent scripts for the `adhrymes` org.
 
 ## What this repo does
 
-When an issue in any opted-in repo is assigned **and** has the `agent` label, a GitHub Actions workflow automatically:
-
-1. Fetches the issue title and body
-2. Checks out the caller repo and searches for relevant files
-3. Looks up library docs via Context7
-4. Calls Claude (Sonnet) to refine the issue — correcting details, adding implementation context, and enforcing type prefixes (`Spike:` / `Story:` / `Epic:`)
-5. Updates the issue body in place with the refined version
+When an issue in any opted-in repo is assigned and has the right labels, a GitHub Actions workflow runs an AI agent to perform the requested task.
 
 ## Label gate
 
-Issues **must** have the `agent` label to trigger refinement. Issues without it are silently skipped, so normal self-assignments are unaffected.
+Every agent-powered task requires **two labels**:
+
+| Label | Purpose |
+|---|---|
+| `agent` | Enables agent processing (always required) |
+| Task label | Selects which agent task to run |
+
+### Available task labels
+
+| Task label | What happens |
+|---|---|
+| `refine` | Rewrites/refines the issue — adds implementation details, enforces type prefixes (`Spike:` / `Story:` / `Epic:`), and verifies against the codebase and docs |
+
+More task labels can be added in the future (e.g., `triage`, `estimate`).
+
+Issues without **both** `agent` and a task label are silently skipped.
 
 ## Opting a repo in
 
@@ -35,19 +44,19 @@ cp .github/workflows/on-issue-assigned.yml.example \
    <your-repo>/.github/workflows/on-issue-assigned.yml
 ```
 
-That's it. Commit and push the file to your repo.
+Commit and push the file to your repo.
 
 ### 3. Use it
 
-1. Add the `agent` label to an issue
-2. Assign the issue (to yourself or anyone)
-3. The refinement workflow fires automatically
+1. Add the `agent` label **and** a task label (e.g., `refine`) to an issue
+2. Assign the issue
+3. The matching workflow fires automatically
 
 ## Agent pipeline
 
 ```
 issues: assigned
-  └─ if: label 'agent' present
+  └─ if: labels 'agent' + 'refine' present
        └─ refine-issue.yml (reusable)
             ├─ checkout caller repo
             ├─ checkout adhrymes/.github (agent scripts)

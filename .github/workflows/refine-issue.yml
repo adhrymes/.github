@@ -24,7 +24,7 @@ on:
 
 jobs:
   refine:
-    if: inputs.labels == '' || contains(inputs.labels, 'agent')
+    if: inputs.labels == '' || (contains(inputs.labels, 'agent') && contains(inputs.labels, 'refine'))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout caller repo

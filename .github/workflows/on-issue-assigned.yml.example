@@ -6,7 +6,9 @@ on:
 
 jobs:
   refine:
-    if: contains(github.event.issue.labels.*.name, 'agent')
+    if: >-
+      contains(github.event.issue.labels.*.name, 'agent') &&
+      contains(github.event.issue.labels.*.name, 'refine')
     uses: adhrymes/.github/.github/workflows/refine-issue.yml@master
     with:
       issue_number: ${{ github.event.issue.number }}
