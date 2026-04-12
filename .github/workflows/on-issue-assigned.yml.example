@@ -1,0 +1,16 @@
+name: Refine Issue on Assignment
+
+on:
+  issues:
+    types: [assigned]
+
+jobs:
+  refine:
+    uses: adhrymes/.github/.github/workflows/refine-issue.yml@master
+    with:
+      issue_number: ${{ github.event.issue.number }}
+      repo: ${{ github.repository }}
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
