@@ -12,6 +12,7 @@ This script:
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -106,8 +107,6 @@ def fetch_file_content(repo: str, file_path: str, pat: str) -> str:
         return ""
     data = response.json()
     # GitHub returns base64-encoded content
-    import base64
-
     try:
         content = base64.b64decode(data.get("content", "")).decode("utf-8", errors="replace")
     except Exception as exc:  # noqa: BLE001
@@ -284,8 +283,11 @@ def extract_search_terms(issue_body: str) -> list[str]:
     file_paths = re.findall(r"\b[\w/]+\.\w+\b", issue_body)
     # Look for PascalCase (class names)
     class_names = re.findall(r"\b[A-Z][a-zA-Z0-9]{2,}\b", issue_body)
-    # Look for snake_case function names
-    func_names = re.findall(r"\b[a-z][a-z0-9_]{3,}\b", issue_body)
+    # Look for snake_case identifiers (must contain underscore or be 6+ chars to avoid common words)
+    func_names = [
+        m for m in re.findall(r"\b[a-z][a-z0-9_]{4,}\b", issue_body)
+        if "_" in m or len(m) >= 6
+    ]
     # Combine, deduplicate, prefer shorter/more specific terms
     terms: list[str] = []
     seen: set[str] = set()
@@ -364,7 +366,7 @@ def detect_libraries(
         libraries.add(lib)
 
     # JS/TS imports
-    for match in re.finditer(r"""(?:import|require)\s*\(?['"]([^'"]+)['"]""", all_text):
+    for match in re.finditer(r"""(?:import|require)\s*\(?['"](.[^'"]+)['"]\)?""", all_text):
         lib = match.group(1).lstrip("@").split("/")[0].lower()
         libraries.add(lib)
 
