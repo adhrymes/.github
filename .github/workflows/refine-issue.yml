@@ -1,0 +1,52 @@
+name: Refine Issue
+
+on:
+  workflow_call:
+    inputs:
+      issue_number:
+        required: true
+        type: number
+      repo:
+        required: true
+        type: string
+    secrets:
+      GH_PAT:
+        required: true
+      ANTHROPIC_API_KEY:
+        required: true
+      CONTEXT7_API_KEY:
+        required: true
+
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout caller repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.repo }}
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Checkout .github repo (agent scripts)
+        uses: actions/checkout@v4
+        with:
+          repository: adhrymes/.github
+          path: _agent
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Install dependencies
+        run: pip install anthropic requests
+
+      - name: Refine issue
+        run: python _agent/scripts/refine_issue.py
+        env:
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          REPO: ${{ inputs.repo }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
