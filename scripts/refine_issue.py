@@ -285,7 +285,7 @@ def extract_search_terms(issue_body: str) -> list[str]:
     class_names = re.findall(r"\b[A-Z][a-zA-Z0-9]{2,}\b", issue_body)
     # Look for snake_case identifiers (must contain underscore or be 6+ chars to avoid common words)
     func_names = [
-        m for m in re.findall(r"\b[a-z][a-z0-9_]{4,}\b", issue_body)
+        m for m in re.findall(r"\b[a-z][a-z0-9_]{5,}\b", issue_body)
         if "_" in m or len(m) >= 6
     ]
     # Combine, deduplicate, prefer shorter/more specific terms
@@ -366,7 +366,7 @@ def detect_libraries(
         libraries.add(lib)
 
     # JS/TS imports
-    for match in re.finditer(r"""(?:import|require)\s*\(?['"](.[^'"]+)['"]\)?""", all_text):
+    for match in re.finditer(r"""(?:import|require)\s*\(?['"]([^'"]+)['"]\)?""", all_text):
         lib = match.group(1).lstrip("@").split("/")[0].lower()
         libraries.add(lib)
 
@@ -508,6 +508,9 @@ def call_claude(prompt: str, api_key: str) -> dict[str, Any]:
         max_tokens=CLAUDE_MAX_TOKENS,
         messages=[{"role": "user", "content": prompt}],
     )
+    if not message.content:
+        print("[ERROR] Claude returned an empty response")
+        sys.exit(1)
     raw_text = message.content[0].text.strip()
     print(f"[INFO] Claude response received ({len(raw_text)} chars)")
 
