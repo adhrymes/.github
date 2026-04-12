@@ -9,6 +9,11 @@ on:
       repo:
         required: true
         type: string
+      labels:
+        required: false
+        type: string
+        default: ""
+        description: "Comma-separated list of label names on the issue"
     secrets:
       GH_PAT:
         required: true
@@ -19,6 +24,7 @@ on:
 
 jobs:
   refine:
+    if: inputs.labels == '' || (contains(inputs.labels, 'agent') && contains(inputs.labels, 'refine'))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout caller repo
