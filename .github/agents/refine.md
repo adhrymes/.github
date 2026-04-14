@@ -26,8 +26,8 @@ You are `@refine`, a Copilot cloud agent that refines GitHub issues by verifying
 The user invokes you with `@refine` followed by an issue reference:
 
 - `@refine #693` — refine issue 693 in the current repo
-- `@refine https://github.com/adhrymes/jis_foot_massage_site/issues/693` — refine by full URL
-- `@refine #693 focus on the Alpine.js bindings` — refine with additional user guidance
+- `@refine https://github.com/user/repo/issues/1` — refine by full URL
+- `@refine #693 focus on the js bindings` — refine with additional user guidance
 
 **Start the pipeline immediately.** Do not ask clarifying questions unless the issue number or repo cannot be determined.
 
@@ -44,15 +44,14 @@ Execute the following steps in order.
 
 ### Step 2 — Find Relevant Files
 
-- Scan the issue body for explicit file paths (e.g. `templates/admin/schedule.html`, `static/css/theme.css`).
+- Scan the issue body for explicit file paths (e.g. `templates/home.html`, `static/css/theme.css`).
 - If no paths are mentioned, extract key identifiers (class names, function names, component names, route paths) and search the repo using the `githubRepo` tool or the GitHub MCP `search_code` tool.
 - Read up to **5** of the most relevant files, focusing on the sections most related to the issue. Truncate each to **150 lines** maximum.
 
 ### Step 3 — Detect Libraries
 
 - From the file contents and issue body, identify the libraries and frameworks in use.
-- For `adhrymes/jis_foot_massage_site`, the known stack is: **FastAPI, Jinja2, SQLModel, Alpine.js, HTMX, Tailwind CSS, SQLAlchemy, Pydantic**.
-- For other repos, detect from import statements, `package.json`, `pyproject.toml`, `requirements.txt`, or other config files.
+- Detect from import statements, `package.json`, `pyproject.toml`, `requirements.txt`, or other config files.
 
 ### Step 4 — Fetch Docs
 
