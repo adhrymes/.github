@@ -29,17 +29,7 @@ import requests
 GITHUB_API = "https://api.github.com"
 CONTEXT7_API = "https://context7.com/api/v1"
 
-# Known stack for adhrymes/jis_foot_massage_site
-KNOWN_STACKS: dict[str, list[str]] = {
-    "adhrymes/jis_foot_massage_site": [
-        "fastapi",
-        "jinja2",
-        "sqlmodel",
-        "alpinejs",
-        "htmx",
-        "tailwindcss",
-    ],
-}
+KNOWN_STACKS: dict[str, list[str]] = {}
 
 # Label definitions: name -> (color, description)
 TYPE_LABELS: dict[str, tuple[str, str]] = {

@@ -9,6 +9,9 @@ on:
       repo:
         required: true
         type: string
+      actor:
+        required: true
+        type: string
       labels:
         required: false
         type: string
@@ -21,10 +24,16 @@ on:
         required: true
       CONTEXT7_API_KEY:
         required: true
+      WORKFLOW_USER:
+        required: true
+      ALLOWED_USERS:
+        required: true
 
 jobs:
   refine:
-    if: inputs.labels == '' || (contains(inputs.labels, 'agent') && contains(inputs.labels, 'refine'))
+    if: >
+      (inputs.labels == '' || (contains(inputs.labels, 'agent') && contains(inputs.labels, 'refine'))) &&
+      contains(fromJSON(format('["{0}"]', join(split(secrets.ALLOWED_USERS, ','), '","'))), inputs.actor)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout caller repo
@@ -41,7 +50,7 @@ jobs:
       - name: Checkout .github repo (agent scripts)
         uses: actions/checkout@v4
         with:
-          repository: adhrymes/.github
+          repository: ${{ secrets.WORKFLOW_USER }}/.github
           path: _agent
           token: ${{ secrets.GH_PAT }}
 

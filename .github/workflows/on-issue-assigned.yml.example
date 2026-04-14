@@ -9,12 +9,16 @@ jobs:
     if: >-
       contains(github.event.issue.labels.*.name, 'agent') &&
       contains(github.event.issue.labels.*.name, 'refine')
-    uses: adhrymes/.github/.github/workflows/refine-issue.yml@master
+    # Replace WORKFLOW_USER below with your GitHub username or org (e.g. my-org/.github/...)
+    uses: WORKFLOW_USER/.github/.github/workflows/refine-issue.yml@master
     with:
       issue_number: ${{ github.event.issue.number }}
       repo: ${{ github.repository }}
+      actor: ${{ github.actor }}
       labels: ${{ join(github.event.issue.labels.*.name, ',') }}
     secrets:
       GH_PAT: ${{ secrets.GH_PAT }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
+      WORKFLOW_USER: ${{ secrets.WORKFLOW_USER }}
+      ALLOWED_USERS: ${{ secrets.ALLOWED_USERS }}
